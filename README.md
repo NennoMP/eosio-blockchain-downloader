@@ -9,4 +9,4 @@ The `main_download.py` takes as input the name of the smart contract, the positi
 To setup the environment, you should follow these steps:
 
 1. Open the project in your IDE.
-2. You have to install all requirements, let's do that with `pip install -r requirements.txt`.
+2. You have to install all requirements, run `pip install -r requirements.txt`.
