@@ -1,4 +1,4 @@
-# EOSIO-blockchain-downloader
+### ...WORK IN PROGRESS...
 
 Project for the retrieval of transactions of a specific Smart Contract on the EOSIO blockchain. The information retrieval is done via EOSFLARE API (eosflare.io/api). 
 
