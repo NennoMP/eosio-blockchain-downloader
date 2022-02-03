@@ -1,21 +1,21 @@
 import requests, time, json, os.path, math
 
+
 # API
-EOSFLARE_API = "https://api.eosflare.io/v1/eosflare/get_actions"
+EOSFLARE_API = 'https://api.eosflare.io/v1/eosflare/get_actions'
 
 # PATH
-fileout = "/path/to/out/dir/"
+fileout = '/path/to/out/dir/'
 
 # GLOBALS
 max_per_minut = 100 # quota limit (EOSFLARE.API)
-tot           = 0   
+tot           = 0   # number of requests counter
 
-'''
-    Utility function for initializing the JSON
-'''
+
 def createJSON(response):
+    """Utility function for initializing the JSON."""
     
-    # Remove useless fields
+    # Remove not relevant fields
     response.pop("head_block_num")
     response.pop("last_irreversible_block")
     
@@ -27,10 +27,8 @@ def createJSON(response):
     return
 
 
-'''
-    Utility function for appending to the JSON
-'''
 def appendJSON(response):
+    """Utility function for appending to the JSON."""
     
     # Get the actions list
     response = response["actions"]
@@ -44,13 +42,11 @@ def appendJSON(response):
         
     return
 
-    
-'''
-    Utility function for a single API request 
-'''
+
 def APIRequest(account_name, pos, offset):
-    global tot
+    """Utility function for a single API request."""
     
+    global tot
     
     # Send POST request
     data = {"account_name": account_name, "pos": int(pos), "offset": int(offset)}
@@ -60,7 +56,7 @@ def APIRequest(account_name, pos, offset):
 
     # Try again if response is not 200 (Success)
     while (status_code != 200):
-        time.sleep(5)   # wait 5 seconds, avoids rejection for too fast requesting
+        time.sleep(5)   # wait 5 seconds, avoids rejection for too fast requests
         data = {"account_name": account_name, "pos": int(pos), "offset": int(offset)}
         r = requests.post(EOSFLARE_API, json.dumps(data))
         status_code = r.status_code
@@ -69,16 +65,14 @@ def APIRequest(account_name, pos, offset):
     return r
 
 
-''' 
-    Utility function for retrieving actions (100.000 per request) 
-'''
 def Get_Actions(account_name, start, n, ow):
+    """Utility function for retrieving actions (100.000 per request)."""
+    
     global offset, max_per_minut, tot
     offset, times, cont  = 1000, 0, 0
     pos = start
     
-    
-    # Send n POST requests
+    # Send 'n' POST requests
     while (times != n):
         cont = 0
         print(f"TIME: {times + 1}")
@@ -97,7 +91,6 @@ def Get_Actions(account_name, start, n, ow):
             pos = pos + offset
             cont = cont + 1
             tot = tot + 1
-
  
         times = times + 1
         print("TOTAL: ", tot)
@@ -123,12 +116,12 @@ def main():
     start = int(start)
     end   = int(end)
 
-    # file
+    # Output file
     fileout = os.path.join(fileout, (account_name + ".json"))
     
     n_times = math.floor((end - (start-1)) / 100000)    # number of blocks of 100.000 actions (100 requests)
     ow      = (end - (start-1)) % 100000                # remainder of last block
-    ow2     = (end - (start-1)) % 1000                  # remainded of last single request
+    ow2     = (end - (start-1)) % 1000                  # remainder of last single request
     
     # Get the actions
     Get_Actions(account_name, start, n_times, ow)
